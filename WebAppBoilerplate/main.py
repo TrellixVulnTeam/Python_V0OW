@@ -20,6 +20,7 @@ users = [
     }
 ]
 
+
 def validateUserRequest(userObject):
     if("name" in userObject and "age" in userObject and "company" in userObject):
         return True
@@ -28,12 +29,13 @@ def validateUserRequest(userObject):
 
 
 @app.route("/users/redirect")
-def redirectUser() :
+def redirectUser():
     return redirect('http://www.google.com')
+
 
 @app.route("/users/View/<string:name>")
 def getHtml(name):
-    return "<h1 style=\"color:blue\">I can project HTML as well..%s impressed??</h1>" %name
+    return "<h1 style=\"color:blue\">I can project HTML as well..%s impressed??</h1>" % name
 
 
 @app.route("/users")
@@ -59,13 +61,14 @@ def deleteUserByName(name):
         if(name == user["name"]):
             users.remove(user)
 
-    response = Response("",201,mimetype="application/json")       
+    response = Response("", 201, mimetype="application/json")
     return response
+
 
 @app.route("/users/save", methods=['POST'])
 def Add_User():
     requestObject = request.get_json()
-    if(validateUserRequest(requestObject)) :
+    if(validateUserRequest(requestObject)):
         new_user = {
             "name": requestObject['name'],
             "age": requestObject['age'],
@@ -73,23 +76,37 @@ def Add_User():
         }
 
         users.insert(0, new_user)
-        response = Response(response="", status=201, mimetype='application/json')
+        response = Response(response="", status=201,
+                            mimetype='application/json')
         response.headers['Location'] = '/users/' + str(new_user['company'])
         return response
     else:
         invalidObjectErrorMsg = {
-            "errorMessage" : "The object is not in correct format"
+            "errorMessage": "The object is not in correct format"
         }
-        response = Response(response=json.dumps(invalidObjectErrorMsg), status=400, mimetype='application/json')
+        response = Response(response=json.dumps(
+            invalidObjectErrorMsg), status=400, mimetype='application/json')
         return response
 
 
-#--------------------------- using rendering engine to show presentation  (JINJA2) ----------------------------# 
+@app.errorhandler(404)
+def handle_not_found(e):
+    return render_template("404.html"), 404
+
+
+@app.errorhandler(501)
+def handle_internal_error(e):
+    return render_template("501.html"), 501
+
+#--------------------------- using rendering engine to show presentation  (JINJA2) ----------------------------#
+
+
 @app.route("/users/displayJinja/<name>")
 def displayJinja(name):
-    return render_template("userlists.html",Name=name,Users= users)
+    return render_template("userlists.html", Name=name, Users=users)
 
-#------------------------------------------------------------------------------------------------------
+# ---------------------------------------------------------------------------------------------------------------
+
 
 if __name__ == "__main__":
     app.run(debug=True)
