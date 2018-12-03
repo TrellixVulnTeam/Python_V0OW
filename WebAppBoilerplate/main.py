@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request, Response
+from flask import Flask, jsonify, request, Response, redirect, render_template
 import json
 from appConfig import *
 
@@ -20,7 +20,6 @@ users = [
     }
 ]
 
-
 def validateUserRequest(userObject):
     if("name" in userObject and "age" in userObject and "company" in userObject):
         return True
@@ -28,11 +27,13 @@ def validateUserRequest(userObject):
         return False
 
 
+@app.route("/users/redirect")
+def redirectUser() :
+    return redirect('http://www.google.com')
 
 @app.route("/users/View/<string:name>")
 def getHtml(name):
     return "<h1 style=\"color:blue\">I can project HTML as well..%s impressed??</h1>" %name
-
 
 
 @app.route("/users")
@@ -59,7 +60,6 @@ def deleteUserByName(name):
             users.remove(user)
 
     response = Response("",201,mimetype="application/json")       
-    
     return response
 
 @app.route("/users/save", methods=['POST'])
@@ -82,6 +82,14 @@ def Add_User():
         }
         response = Response(response=json.dumps(invalidObjectErrorMsg), status=400, mimetype='application/json')
         return response
+
+
+#--------------------------- using rendering engine to show presentation  (JINJA2) ----------------------------# 
+@app.route("/users/displayJinja/<name>")
+def displayJinja(name):
+    return render_template("userlists.html",Name=name,Users= users)
+
+#------------------------------------------------------------------------------------------------------
 
 if __name__ == "__main__":
     app.run(debug=True)
