@@ -1,6 +1,8 @@
 from flask import Flask, jsonify, request, Response, redirect, render_template
 import json
 from appConfig import *
+# from flask.ext.moment import Moment
+# moment = Moment(app)
 
 users = [
     {
