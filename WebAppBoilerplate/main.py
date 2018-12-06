@@ -35,6 +35,15 @@ def getToken():
     token = jwt.encode({'exp' : expirationTime }, "meow", algorithm='HS256')
     return token
 
+
+
+def validateToken():
+    token = request.args.get['token']
+    try:
+        token.decode()
+        return True
+    except:
+        return False    
 #----------------------------------------------------------------------------------------------
 
 def validateUserRequest(userObject):
