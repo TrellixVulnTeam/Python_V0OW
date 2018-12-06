@@ -1,8 +1,10 @@
 from flask import Flask, jsonify, request, Response, redirect, render_template
 import json
+import jwt,datetime
 from appConfig import *
-# from flask.ext.moment import Moment
-# moment = Moment(app)
+
+# from flask_moment import Moment
+
 
 users = [
     {
@@ -19,9 +21,21 @@ users = [
         'name': 'Pratyush',
         'age': 26,
         'company': 'Apple'
+    },
+    {
+        'name': 'Sandesh',
+        'age': 26,
+        'company': 'Adobe'
     }
 ]
+#------------------------------ Implementing JWT Web Token------------------------------------#
+@app.route("/login")
+def getToken():
+    expirationTime = datetime.datetime.utcnow() + datetime.timedelta(seconds = 10000)
+    token = jwt.encode({'exp' : expirationTime }, "meow", algorithm='HS256')
+    return token
 
+#----------------------------------------------------------------------------------------------
 
 def validateUserRequest(userObject):
     if("name" in userObject and "age" in userObject and "company" in userObject):
