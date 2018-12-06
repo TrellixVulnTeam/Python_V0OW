@@ -88,8 +88,7 @@ def Add_User():
         }
         response = Response(response=json.dumps(
             invalidObjectErrorMsg), status=400, mimetype='application/json')
-        return response
-
+    return response
 
 @app.errorhandler(404)
 def handle_not_found(e):
